@@ -1,0 +1,55 @@
+.analysis-container {
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+section {
+  margin-bottom: 40px;
+}
+
+.summary-list,
+.subject-report {
+  list-style: none;
+  padding-left: 0;
+  font-size: 16px;
+}
+
+.summary-list li,
+.subject-report li {
+  margin: 6px 0;
+}
+
+.present {
+  color: green;
+}
+
+.absent {
+  color: red;
+}
+
+.leave {
+  color: purple;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+table th,
+table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+}
+
+.week-block {
+  margin-top: 20px;
+}
+
