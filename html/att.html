@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semester V Timetable</title>
+    <script>
+        let attendanceRecords = JSON.parse(localStorage.getItem('attendanceRecords')) || [];
+        let currentDay = '';
+        let currentPeriod = '';
+
+        // Function to handle status selection
+        function selectStatus(day, period) {
+            currentDay = day;
+            currentPeriod = period;
+            document.getElementById('modalInfo').textContent = `${day} - ${period}`;
+            document.getElementById('statusModal').style.display = 'flex';
+        }
+
+        // Function to submit status
+        function submitStatus(status) {
+            attendanceRecords.push({
+                day: currentDay,
+                period: currentPeriod,
+                status
+            });
+            localStorage.setItem('attendanceRecords', JSON.stringify(attendanceRecords));
+            alert(`You have marked ${status} for ${currentDay} - ${currentPeriod}`);
+            closeModal();
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById('statusModal').style.display = 'none';
+        }
+
+        // Function to view detailed attendance list
+        function viewAttendance() {
+            window.location.href = "attendance-list.html";
+        }
+
+        // Function to load attendance and color the timetable
+        function loadTimetable() {
+            const timetableRows = document.querySelectorAll('.timetable-row');
+
+            timetableRows.forEach(row => {
+                const cells = row.querySelectorAll('.timetable-cell');
+                cells.forEach(cell => {
+                    const day = row.querySelector('.day').textContent;
+                    const period = cell.getAttribute('data-period');
+                    const status = getStatusFor(day, period);
+
+                    if (status === 'Present') {
+                        cell.style.backgroundColor = '#FFB6C1';  // Light Pink
+                    } else if (status === 'Absent') {
+                        cell.style.backgroundColor = '#FF1493';  // Dark Pink
+                        cell.style.color = 'white';
+                    } else if (status === 'Leave') {
+                        cell.style.backgroundColor = '#D8BFD8';  // Light Purple
+                    }
+                });
+            });
+        }
+
+        // Get the attendance status for a specific day and period
+        function getStatusFor(day, period) {
+            const record = attendanceRecords.find(r => r.day === day && r.period === period);
+            return record ? record.status : null;
+        }
+
+        window.onload = loadTimetable;  // Load timetable when the page loads
+    </script>
+
+    <style>
+        /* Basic Styles for Table */
+        table {
+            width: 100%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f8f8f8;
+            color: #555;
+        }
+
+        .empty {
+            background-color: #f5f5f5;
+        }
+
+        .timetable-cell {
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .day {
+            font-weight: bold;
+        }
+
+        /* Modal for Attendance Status */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 182, 193, 0.6);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #fff0f5;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(255, 105, 180, 0.3);
+            text-align: center;
+            max-width: 300px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-content h3 {
+            color: #c71585;
+            margin-bottom: 10px;
+        }
+
+        .modal-content p {
+            margin-bottom: 15px;
+            color: #4b004b;
+        }
+
+        .status-options button {
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            margin: 5px;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .status-options button:hover {
+            background-color: #ff1493;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 24px;
+            color: #c71585;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>SECTOR LITUS LOCUM</h1>
+        <p>Academic Year: 2025-26</p>
+        <p>Effective From: 01/08/2025</p>
+        <h2>SEMESTER: V</h2>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Days</th>
+                <th>Lecture 1<br>8:40-9:30</th>
+                <th>Lecture 2<br>9:30-10:20</th>
+                <th>Lecture 3<br>10:20-11:10</th>
+                <th>Lecture 4<br>11:10-12:00</th>
+                <th>Lecture 5<br>12:00-12:50</th>
+                <th>Lecture 6<br>12:50-14:00</th>
+                <th>Lecture 7<br>13:40-23:00</th>
+                <th>Lecture 8<br>2:30-3:20</th>
+                <th>Lecture 9<br>3:20-4:10</th>
+                <th>Lecture 10<br>4:10-5:00</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="timetable-row">
+                <td class="day">Monday</td>
+                <td class="timetable-cell" data-period="Lecture 1" onclick="selectStatus('Monday', 'Lecture 1')">EEMI(L)/B 301/SG</td>
+                <td class="timetable-cell" data-period="Lecture 2" onclick="selectStatus('Monday', 'Lecture 2')">PE(L)/B 301/SB</td>
+                <td class="timetable-cell" data-period="Lecture 3" onclick="selectStatus('Monday', 'Lecture 3')">EEMI(T1)/A 307/SG<br>MPMC (T2)/A 304/SB</td>
+                <td class="empty"></td>
+                <td class="timetable-cell" data-period="Lecture 5" onclick="selectStatus('Monday', 'Lecture 5')">PS-II(L)/B 301/KT</td>
+                <td class="timetable-cell" data-period="Lecture 6" onclick="selectStatus('Monday', 'Lecture 6')">PE(T2)/A 304/SB<br>PS-II (T1)/A 307/KT</td>
+                <td class="empty"></td>
+                <td class="timetable-cell" data-period="Lecture 8" onclick="selectStatus('Monday', 'Lecture 8')">EoE(L)/B 301/SS</td>
+                <td class="empty"></td>
+                <td class="empty"></td>
+            </tr>
+            <!-- Repeat for all other days (Tuesday, Wednesday, Thursday, Friday) -->
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <button onclick="viewAttendance()">View Attendance</button>
+    </div>
+
+    <!-- Modal for Attendance Status -->
+    <div id="statusModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Mark Your Attendance</h3>
+            <p id="modalInfo"></p>
+            <div class="status-options">
+                <button onclick="submitStatus('Present')">Present</button>
+                <button onclick="submitStatus('Absent')">Absent</button>
+                <button onclick="submitStatus('Leave')">Leave</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

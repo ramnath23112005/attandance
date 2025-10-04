@@ -1,0 +1,254 @@
+{
+  "2025-08-04": [
+    {
+      "day": "Monday",
+      "period": "Lecture 1",
+      "status": "Absent"
+    },
+    {
+      "day": "Monday",
+      "period": "Lecture 2",
+      "status": "Present"
+    },
+    {
+      "day": "Monday",
+      "period": "Lecture 3",
+      "status": "Leave"
+    },
+    {
+      "day": "Monday",
+      "period": "Lecture 5",
+      "status": "Leave"
+    },
+    {
+      "day": "Monday",
+      "period": "Lecture 6",
+      "status": "Present"
+    }
+  ],
+  "2025-08-05": [
+    {
+      "day": "Tuesday",
+      "period": "Lecture 1",
+      "status": "Leave"
+    },
+    {
+      "day": "Tuesday",
+      "period": "Lecture 2",
+      "status": "Leave"
+    },
+    {
+      "day": "Tuesday",
+      "period": "Lecture 3",
+      "status": "Present"
+    },
+    {
+      "day": "Tuesday",
+      "period": "Lecture 5",
+      "status": "Leave"
+    },
+    {
+      "day": "Tuesday",
+      "period": "Lecture 6",
+      "status": "Present"
+    },
+    {
+      "day": "Tuesday",
+      "period": "Lecture 8",
+      "status": "Absent"
+    }
+  ],
+  "2025-08-06": [
+    {
+      "day": "Wednesday",
+      "period": "Lecture 1",
+      "status": "Absent"
+    },
+    {
+      "day": "Wednesday",
+      "period": "Lecture 2",
+      "status": "Present"
+    },
+    {
+      "day": "Wednesday",
+      "period": "Lecture 3",
+      "status": "Present"
+    },
+    {
+      "day": "Wednesday",
+      "period": "Lecture 4",
+      "status": "Present"
+    },
+    {
+      "day": "Wednesday",
+      "period": "Lecture 6",
+      "status": "Leave"
+    }
+  ],
+  "2025-08-07": [
+    {
+      "day": "Thursday",
+      "period": "Lecture 3",
+      "status": "Absent"
+    },
+    {
+      "day": "Thursday",
+      "period": "Lecture 4",
+      "status": "Absent"
+    },
+    {
+      "day": "Thursday",
+      "period": "Lecture 6",
+      "status": "Present"
+    },
+    {
+      "day": "Thursday",
+      "period": "Lecture 7",
+      "status": "Leave"
+    },
+    {
+      "day": "Thursday",
+      "period": "Lecture 8",
+      "status": "Present"
+    }
+  ],
+  "2025-08-08": [
+    {
+      "day": "Friday",
+      "period": "Lecture 1",
+      "status": "Leave"
+    },
+    {
+      "day": "Friday",
+      "period": "Lecture 2",
+      "status": "Leave"
+    },
+    {
+      "day": "Friday",
+      "period": "Lecture 3",
+      "status": "Leave"
+    },
+    {
+      "day": "Friday",
+      "period": "Lecture 4",
+      "status": "Leave"
+    },
+    {
+      "day": "Friday",
+      "period": "Lecture 6",
+      "status": "Leave"
+    },
+    {
+      "day": "Friday",
+      "period": "Lecture 8",
+      "status": "Leave"
+    }
+  ],
+  "2025-08-10": [
+    {
+      "day": "Monday",
+      "period": "Lecture 1",
+      "status": "Absent"
+    },
+    {
+      "day": "Monday",
+      "period": "Lecture 2",
+      "status": "Present"
+    },
+    {
+      "day": "Monday",
+      "period": "Lecture 3",
+      "status": "Present"
+    },
+    {
+      "day": "Monday",
+      "period": "Lecture 5",
+      "status": "Present"
+    },
+    {
+      "day": "Monday",
+      "period": "Lecture 6",
+      "status": "Present"
+    },
+    {
+      "day": "Monday",
+      "period": "Lecture 8",
+      "status": "Present"
+    }
+  ],
+  "2025-08-11": [
+    {
+      "day": "Tuesday",
+      "period": "Lecture 1",
+      "status": "Absent"
+    },
+    {
+      "day": "Tuesday",
+      "period": "Lecture 2",
+      "status": "Absent"
+    },
+    {
+      "day": "Tuesday",
+      "period": "Lecture 3",
+      "status": "Present"
+    },
+    {
+      "day": "Tuesday",
+      "period": "Lecture 5",
+      "status": "Absent"
+    },
+    {
+      "day": "Tuesday",
+      "period": "Lecture 6",
+      "status": "Present"
+    }
+  ],
+  "2025-08-12": [
+    {
+      "day": "Wednesday",
+      "period": "Lecture 1",
+      "status": "Absent"
+    },
+    {
+      "day": "Wednesday",
+      "period": "Lecture 2",
+      "status": "Present"
+    },
+    {
+      "day": "Wednesday",
+      "period": "Lecture 3",
+      "status": "Present"
+    },
+    {
+      "day": "Wednesday",
+      "period": "Lecture 4",
+      "status": "Absent"
+    },
+    {
+      "day": "Wednesday",
+      "period": "Lecture 6",
+      "status": "Leave"
+    }
+  ],
+  "2025-09-08": [
+    {
+      "day": "Monday",
+      "period": "Lecture 5",
+      "status": "Present"
+    }
+  ],
+  "2025-09-11": [
+    {
+      "day": "Thursday",
+      "period": "Lecture 3",
+      "status": "Absent"
+    }
+  ],
+  "2025-09-10": [
+    {
+      "day": "Wednesday",
+      "period": "Lecture 6",
+      "status": "Leave"
+    }
+  ]
+}
