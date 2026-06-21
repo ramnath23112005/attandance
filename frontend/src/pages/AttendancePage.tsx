@@ -2,20 +2,25 @@ import { useState, useMemo } from 'react';
 import {
   Box, Card, CardContent, Typography, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, Chip, Button, ToggleButtonGroup, ToggleButton,
-  Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, Select, MenuItem,
-  TextField, Skeleton, Alert, IconButton, Tooltip, Grid,
+  Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, Select,
+  MenuItem, TextField, Skeleton, Alert, IconButton, Tooltip, Grid, Stack, Avatar,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import HistoryIcon from '@mui/icons-material/History';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import EventBusyIcon from '@mui/icons-material/EventBusy';
 import { useAttendanceRecords, useMarkAttendance, useUpdateAttendance } from '../hooks/useAttendance';
 import { useWeeklyTimetable } from '../hooks/useTimetable';
 import { useAuth } from '../context/AuthContext';
 import { AttendanceStatus, UserRole, TimetableEntry } from '../types';
 import dayjs from 'dayjs';
 
-const STATUS_COLORS: Record<string, string> = {
-  Present: '#4caf50',
-  Absent: '#f44336',
-  Leave: '#9c27b0',
+const STATUS_CONFIG: Record<string, { label: string; color: string; bgcolor: string; icon: React.ReactNode }> = {
+  Present: { label: 'Present', color: '#2e7d32', bgcolor: '#e8f5e9', icon: <CheckCircleIcon fontSize="small" /> },
+  Absent: { label: 'Absent', color: '#d32f2f', bgcolor: '#fbe9e7', icon: <CancelIcon fontSize="small" /> },
+  Leave: { label: 'Leave', color: '#e65100', bgcolor: '#fff3e0', icon: <EventBusyIcon fontSize="small" /> },
 };
 
 export default function AttendancePage() {
@@ -27,6 +32,8 @@ export default function AttendancePage() {
   const [selectedTimetableId, setSelectedTimetableId] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<AttendanceStatus>(AttendanceStatus.PRESENT);
   const [editId, setEditId] = useState<string | null>(null);
+  const [editStatus, setEditStatus] = useState<AttendanceStatus>(AttendanceStatus.PRESENT);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const { data: recordsData, isLoading: recordsLoading } = useAttendanceRecords(isFacultyOrAdmin ? undefined : user?.id);
   const { data: weeklyData } = useWeeklyTimetable();
@@ -51,49 +58,59 @@ export default function AttendancePage() {
         status: selectedStatus,
       });
       setMarkDialog(false);
-    } catch {
-      // handled by react-query
-    }
+    } catch { /* handled */ }
   };
 
-  const handleEditStatus = async (id: string, newStatus: AttendanceStatus) => {
+  const handleEditClick = (id: string, currentStatus: string) => {
+    setEditId(id);
+    setEditStatus(currentStatus as AttendanceStatus);
+    setEditDialogOpen(true);
+  };
+
+  const handleEditSave = async () => {
+    if (!editId) return;
     try {
-      await updateMutation.mutateAsync({ id, status: newStatus });
-    } catch {
-      // handled
-    }
+      await updateMutation.mutateAsync({ id: editId, status: editStatus });
+      setEditDialogOpen(false);
+    } catch { /* handled */ }
   };
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h5" fontWeight={600}>Attendance</Typography>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3} flexWrap="wrap" gap={2}>
+        <Box>
+          <Typography variant="h5" fontWeight={800}>Attendance</Typography>
+          <Typography variant="body2" color="text.secondary">Track and manage attendance records</Typography>
+        </Box>
         <Box display="flex" gap={2} alignItems="center">
           <ToggleButtonGroup value={view} exclusive onChange={(_, v) => v && setView(v)} size="small">
-            <ToggleButton value="history">History</ToggleButton>
-            {isFacultyOrAdmin && <ToggleButton value="mark">Mark</ToggleButton>}
+            <ToggleButton value="history" sx={{ px: 2 }}>
+              <HistoryIcon sx={{ mr: 0.5, fontSize: 18 }} /> History
+            </ToggleButton>
+            {isFacultyOrAdmin && (
+              <ToggleButton value="mark" sx={{ px: 2 }}>
+                <HowToRegIcon sx={{ mr: 0.5, fontSize: 18 }} /> Mark
+              </ToggleButton>
+            )}
           </ToggleButtonGroup>
-          {isFacultyOrAdmin && view === 'mark' && (
-            <Button variant="contained" onClick={() => setMarkDialog(true)}>
-              Mark Attendance
-            </Button>
-          )}
         </Box>
       </Box>
 
       {view === 'mark' && isFacultyOrAdmin && (
         <Card sx={{ mb: 3 }}>
           <CardContent>
-            <Typography variant="h6" gutterBottom>Todays Schedule</Typography>
-            <TextField
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              size="small"
-              sx={{ mb: 2 }}
-            />
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+              <Typography variant="h6" fontWeight={700}>Today's Schedule</Typography>
+              <TextField
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                size="small"
+                sx={{ '& input': { fontSize: '0.875rem' } }}
+              />
+            </Box>
             {todayTimetable.length > 0 ? (
-              <TableContainer component={Paper} variant="outlined">
+              <TableContainer>
                 <Table size="small">
                   <TableHead>
                     <TableRow>
@@ -102,26 +119,48 @@ export default function AttendancePage() {
                       <TableCell>Faculty</TableCell>
                       <TableCell>Room</TableCell>
                       <TableCell>Time</TableCell>
+                      <TableCell align="center">Action</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {todayTimetable.map((entry) => (
-                      <TableRow key={entry._id} hover sx={{ cursor: 'pointer' }} onClick={() => {
-                        setSelectedTimetableId(entry._id);
-                        setMarkDialog(true);
-                      }}>
-                        <TableCell>{entry.period}</TableCell>
-                        <TableCell>{entry.subject}</TableCell>
+                      <TableRow key={entry._id} hover>
+                        <TableCell>
+                          <Chip label={entry.period} size="small" color="primary" variant="outlined" />
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" fontWeight={600}>{entry.subject}</Typography>
+                        </TableCell>
                         <TableCell>{entry.faculty}</TableCell>
                         <TableCell>{entry.room}</TableCell>
-                        <TableCell>{entry.startTime}-{entry.endTime}</TableCell>
+                        <TableCell>
+                          <Typography variant="caption" color="text.secondary">
+                            {entry.startTime} - {entry.endTime}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="center">
+                          <Button
+                            variant="contained"
+                            size="small"
+                            disableElevation
+                            sx={{ borderRadius: 2, px: 2, fontSize: '0.75rem' }}
+                            onClick={() => {
+                              setSelectedTimetableId(entry._id);
+                              setMarkDialog(true);
+                            }}
+                          >
+                            Mark
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </TableContainer>
             ) : (
-              <Alert severity="info">No classes scheduled for today</Alert>
+              <Alert severity="info" sx={{ borderRadius: 2 }}>
+                No classes scheduled for {selectedDate === dayjs().format('YYYY-MM-DD') ? 'today' : 'this date'}
+              </Alert>
             )}
           </CardContent>
         </Card>
@@ -129,11 +168,14 @@ export default function AttendancePage() {
 
       <Card>
         <CardContent>
-          <Typography variant="h6" gutterBottom>Attendance Records</Typography>
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+            <Typography variant="h6" fontWeight={700}>Attendance Records</Typography>
+            <Typography variant="caption" color="text.secondary">{records.length} record{records.length !== 1 ? 's' : ''}</Typography>
+          </Box>
           {recordsLoading ? (
-            <Skeleton variant="rounded" height={200} />
+            <Skeleton variant="rounded" height={300} sx={{ borderRadius: 2 }} />
           ) : records.length > 0 ? (
-            <TableContainer component={Paper} variant="outlined">
+            <TableContainer>
               <Table>
                 <TableHead>
                   <TableRow>
@@ -142,93 +184,101 @@ export default function AttendancePage() {
                     <TableCell>Period</TableCell>
                     <TableCell>Subject</TableCell>
                     <TableCell>Status</TableCell>
-                    {isFacultyOrAdmin && <TableCell>Actions</TableCell>}
+                    {isFacultyOrAdmin && <TableCell align="center">Actions</TableCell>}
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {records.map((record) => (
-                    <TableRow key={record._id}>
-                      <TableCell>{dayjs(record.date).format('MMM D, YYYY')}</TableCell>
-                      <TableCell>{record.day}</TableCell>
-                      <TableCell>{record.period}</TableCell>
-                      <TableCell>{record.subject}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={record.status}
-                          size="small"
-                          sx={{
-                            bgcolor: STATUS_COLORS[record.status],
-                            color: '#fff',
-                            fontWeight: 600,
-                          }}
-                        />
-                      </TableCell>
-                      {isFacultyOrAdmin && (
+                  {records.map((record) => {
+                    const sc = STATUS_CONFIG[record.status];
+                    return (
+                      <TableRow key={record._id} hover>
                         <TableCell>
-                          {[AttendanceStatus.PRESENT, AttendanceStatus.ABSENT, AttendanceStatus.LEAVE].map((s) => (
-                            <Tooltip key={s} title={`Change to ${s}`}>
-                              <IconButton
-                                size="small"
-                                onClick={() => handleEditStatus(record._id, s)}
-                                disabled={record.status === s || updateMutation.isPending}
-                                sx={{
-                                  color: STATUS_COLORS[s],
-                                  opacity: record.status === s ? 0.4 : 1,
-                                }}
-                              >
+                          <Typography variant="body2" fontWeight={600}>
+                            {dayjs(record.date).format('MMM D, YYYY')}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>{record.day}</TableCell>
+                        <TableCell>
+                          <Chip label={record.period} size="small" variant="outlined" color="primary" />
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" fontWeight={500}>{record.subject}</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            icon={sc?.icon}
+                            label={record.status}
+                            size="small"
+                            sx={{ bgcolor: sc?.bgcolor, color: sc?.color, fontWeight: 700, '& .MuiChip-icon': { color: sc?.color } }}
+                          />
+                        </TableCell>
+                        {isFacultyOrAdmin && (
+                          <TableCell align="center">
+                            <Tooltip title="Edit Status">
+                              <IconButton size="small" onClick={() => handleEditClick(record._id, record.status)}>
                                 <EditIcon fontSize="small" />
                               </IconButton>
                             </Tooltip>
-                          ))}
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  ))}
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </TableContainer>
-          ) : (
-            <Alert severity="info">No attendance records found</Alert>
-          )}
+          ) : <Alert severity="info">No attendance records found</Alert>}
         </CardContent>
       </Card>
 
-      <Dialog open={markDialog} onClose={() => setMarkDialog(false)}>
-        <DialogTitle>Mark Attendance</DialogTitle>
+      <Dialog open={markDialog} onClose={() => setMarkDialog(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ pb: 1 }}>Mark Attendance</DialogTitle>
         <DialogContent>
-          <Box display="flex" flexDirection="column" gap={2} pt={1} minWidth={300}>
+          <Stack spacing={2.5} pt={1}>
             <FormControl fullWidth>
               <InputLabel>Timetable Entry</InputLabel>
-              <Select
-                value={selectedTimetableId}
-                label="Timetable Entry"
-                onChange={(e) => setSelectedTimetableId(e.target.value)}
-              >
+              <Select value={selectedTimetableId} label="Timetable Entry" onChange={(e) => setSelectedTimetableId(e.target.value)}>
                 {todayTimetable.map((entry) => (
                   <MenuItem key={entry._id} value={entry._id}>
-                    {entry.period} - {entry.subject}
+                    {entry.period} — {entry.subject}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
             <FormControl fullWidth>
               <InputLabel>Status</InputLabel>
-              <Select
-                value={selectedStatus}
-                label="Status"
-                onChange={(e) => setSelectedStatus(e.target.value as AttendanceStatus)}
-              >
+              <Select value={selectedStatus} label="Status" onChange={(e) => setSelectedStatus(e.target.value as AttendanceStatus)}>
                 <MenuItem value={AttendanceStatus.PRESENT}>Present</MenuItem>
                 <MenuItem value={AttendanceStatus.ABSENT}>Absent</MenuItem>
                 <MenuItem value={AttendanceStatus.LEAVE}>Leave</MenuItem>
               </Select>
             </FormControl>
-          </Box>
+          </Stack>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setMarkDialog(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleMark} disabled={!selectedTimetableId || markMutation.isPending}>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setMarkDialog(false)} color="inherit">Cancel</Button>
+          <Button variant="contained" disableElevation onClick={handleMark} disabled={!selectedTimetableId || markMutation.isPending}>
             Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle sx={{ pb: 1 }}>Edit Status</DialogTitle>
+        <DialogContent>
+          <FormControl fullWidth sx={{ pt: 1 }}>
+            <InputLabel>New Status</InputLabel>
+            <Select value={editStatus} label="New Status" onChange={(e) => setEditStatus(e.target.value as AttendanceStatus)}>
+              <MenuItem value={AttendanceStatus.PRESENT}>Present</MenuItem>
+              <MenuItem value={AttendanceStatus.ABSENT}>Absent</MenuItem>
+              <MenuItem value={AttendanceStatus.LEAVE}>Leave</MenuItem>
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setEditDialogOpen(false)} color="inherit">Cancel</Button>
+          <Button variant="contained" disableElevation onClick={handleEditSave} disabled={updateMutation.isPending}>
+            Update
           </Button>
         </DialogActions>
       </Dialog>

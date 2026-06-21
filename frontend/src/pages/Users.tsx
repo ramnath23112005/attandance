@@ -1,16 +1,15 @@
 import { useState } from 'react';
 import {
   Box, Card, CardContent, Typography, Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Paper, Chip, TablePagination, Skeleton, Alert, Avatar,
+  TableHead, TableRow, Chip, TablePagination, Skeleton, Alert, Avatar, Stack,
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { authService } from '../services/auth.service';
-import { UserRole } from '../types';
 
-const ROLE_COLORS: Record<string, string> = {
-  admin: '#f44336',
-  faculty: '#2196f3',
-  student: '#4caf50',
+const ROLE_CONFIG: Record<string, { color: string; bgcolor: string }> = {
+  admin: { color: '#d32f2f', bgcolor: '#fbe9e7' },
+  faculty: { color: '#1565c0', bgcolor: '#e3f2fd' },
+  student: { color: '#2e7d32', bgcolor: '#e8f5e9' },
 };
 
 export default function Users() {
@@ -27,12 +26,15 @@ export default function Users() {
 
   return (
     <Box>
-      <Typography variant="h5" fontWeight={600} mb={3}>User Management</Typography>
+      <Typography variant="h5" fontWeight={800} mb={0.5}>User Management</Typography>
+      <Typography variant="body2" color="text.secondary" mb={3}>
+        View and manage all system users ({total} total)
+      </Typography>
 
       <Card>
         <CardContent sx={{ p: 0 }}>
           {isLoading ? (
-            <Skeleton variant="rounded" height={400} />
+            <Skeleton variant="rounded" height={400} sx={{ borderRadius: 2 }} />
           ) : users.length > 0 ? (
             <>
               <TableContainer>
@@ -49,38 +51,49 @@ export default function Users() {
                   <TableBody>
                     {users.map((u, idx) => {
                       const row = u as Record<string, string | boolean | undefined>;
+                      const role = (row.role as string) || '';
+                      const rc = ROLE_CONFIG[role] || { color: '#757575', bgcolor: '#f5f5f5' };
                       return (
-                      <TableRow key={(row._id as string) || idx} hover>
-                        <TableCell>
-                          <Box display="flex" alignItems="center" gap={2}>
-                            <Avatar sx={{ width: 32, height: 32, bgcolor: ROLE_COLORS[(row.role as string)] || '#757575', fontSize: 14 }}>
-                              {(row.name as string)?.charAt(0).toUpperCase()}
-                            </Avatar>
-                            {row.name as string}
-                          </Box>
-                        </TableCell>
-                        <TableCell>{row.email as string}</TableCell>
-                        <TableCell>
-                          <Chip
-                            label={row.role as string}
-                            size="small"
-                            sx={{
-                              bgcolor: ROLE_COLORS[(row.role as string)] || '#757575',
-                              color: '#fff',
-                              fontWeight: 600,
-                              textTransform: 'capitalize',
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell>{(row.department as string) || '—'}</TableCell>
-                        <TableCell>
-                          <Chip
-                            label={row.isActive ? 'Active' : 'Inactive'}
-                            size="small"
-                            color={row.isActive ? 'success' : 'default'}
-                          />
-                        </TableCell>
-                      </TableRow>
+                        <TableRow key={(row._id as string) || idx} hover>
+                          <TableCell>
+                            <Box display="flex" alignItems="center" gap={1.5}>
+                              <Avatar sx={{ width: 34, height: 34, bgcolor: rc.color, fontSize: 14, fontWeight: 700 }}>
+                                {(row.name as string)?.charAt(0).toUpperCase()}
+                              </Avatar>
+                              <Box>
+                                <Typography variant="body2" fontWeight={600}>
+                                  {row.name as string}
+                                </Typography>
+                              </Box>
+                            </Box>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body2" color="text.secondary">
+                              {row.email as string}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              label={role}
+                              size="small"
+                              sx={{ bgcolor: rc.bgcolor, color: rc.color, fontWeight: 700, textTransform: 'capitalize' }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body2">
+                              {(row.department as string) || '—'}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              label={row.isActive ? 'Active' : 'Inactive'}
+                              size="small"
+                              color={row.isActive ? 'success' : 'default'}
+                              variant="outlined"
+                              sx={{ fontWeight: 600 }}
+                            />
+                          </TableCell>
+                        </TableRow>
                       );
                     })}
                   </TableBody>

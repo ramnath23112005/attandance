@@ -2,11 +2,12 @@ import { useState } from 'react';
 import {
   Box, Card, CardContent, Typography, Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, Chip, Button, Dialog, DialogTitle, DialogContent,
-  DialogActions, TextField, TablePagination, Skeleton, Alert, IconButton, Tooltip,
+  DialogActions, TextField, TablePagination, Skeleton, Alert, IconButton, Tooltip, Stack,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import BookIcon from '@mui/icons-material/Book';
 import { useSubjects, useCreateSubject, useUpdateSubject, useDeleteSubject } from '../hooks/useSubjects';
 
 const defaultForm = { code: '', name: '', department: '', semester: 1 };
@@ -38,12 +39,7 @@ export default function SubjectsPage() {
 
   const handleOpenEdit = (subject: typeof subjects[number]) => {
     setEditId(subject._id);
-    setForm({
-      code: subject.code,
-      name: subject.name,
-      department: subject.department,
-      semester: subject.semester,
-    });
+    setForm({ code: subject.code, name: subject.name, department: subject.department, semester: subject.semester });
     setDialogOpen(true);
   };
 
@@ -55,9 +51,7 @@ export default function SubjectsPage() {
         await createMutation.mutateAsync(form);
       }
       setDialogOpen(false);
-    } catch {
-      // handled by react-query
-    }
+    } catch { /* handled */ }
   };
 
   const handleDelete = async (id: string) => {
@@ -68,9 +62,12 @@ export default function SubjectsPage() {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h5" fontWeight={600}>Subjects</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenCreate}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3} flexWrap="wrap" gap={2}>
+        <Box>
+          <Typography variant="h5" fontWeight={800}>Subjects</Typography>
+          <Typography variant="body2" color="text.secondary">Manage academic subjects ({total} total)</Typography>
+        </Box>
+        <Button variant="contained" startIcon={<AddIcon />} disableElevation onClick={handleOpenCreate}>
           Add Subject
         </Button>
       </Box>
@@ -78,7 +75,7 @@ export default function SubjectsPage() {
       <Card>
         <CardContent sx={{ p: 0 }}>
           {isLoading ? (
-            <Skeleton variant="rounded" height={400} />
+            <Skeleton variant="rounded" height={400} sx={{ borderRadius: 2 }} />
           ) : subjects.length > 0 ? (
             <>
               <TableContainer>
@@ -88,24 +85,42 @@ export default function SubjectsPage() {
                       <TableCell>Code</TableCell>
                       <TableCell>Name</TableCell>
                       <TableCell>Department</TableCell>
-                      <TableCell>Semester</TableCell>
+                      <TableCell align="center">Semester</TableCell>
                       <TableCell>Status</TableCell>
-                      <TableCell>Actions</TableCell>
+                      <TableCell align="center">Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {subjects.map((subject) => (
                       <TableRow key={subject._id} hover>
-                        <TableCell><Chip label={subject.code} size="small" color="primary" variant="outlined" /></TableCell>
-                        <TableCell>{subject.name}</TableCell>
-                        <TableCell>{subject.department}</TableCell>
-                        <TableCell>{subject.semester}</TableCell>
                         <TableCell>
-                          <Chip label={subject.isActive ? 'Active' : 'Inactive'} size="small" color={subject.isActive ? 'success' : 'default'} />
+                          <Chip label={subject.code} size="small" color="primary" variant="outlined" sx={{ fontWeight: 700, fontFamily: 'monospace' }} />
                         </TableCell>
                         <TableCell>
-                          <IconButton size="small" onClick={() => handleOpenEdit(subject)}><EditIcon /></IconButton>
-                          <IconButton size="small" onClick={() => handleDelete(subject._id)}><DeleteIcon /></IconButton>
+                          <Box display="flex" alignItems="center" gap={1}>
+                            <BookIcon sx={{ color: '#1a237e', fontSize: 18, opacity: 0.6 }} />
+                            <Typography variant="body2" fontWeight={600}>{subject.name}</Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>{subject.department}</TableCell>
+                        <TableCell align="center">
+                          <Chip label={`Sem ${subject.semester}`} size="small" variant="outlined" sx={{ fontWeight: 600 }} />
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={subject.isActive ? 'Active' : 'Inactive'}
+                            size="small"
+                            color={subject.isActive ? 'success' : 'default'}
+                            sx={{ fontWeight: 600 }}
+                          />
+                        </TableCell>
+                        <TableCell align="center">
+                          <IconButton size="small" onClick={() => handleOpenEdit(subject)} sx={{ mr: 0.5 }}>
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton size="small" onClick={() => handleDelete(subject._id)} color="error">
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -128,18 +143,18 @@ export default function SubjectsPage() {
       </Card>
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>{editId ? 'Edit Subject' : 'Add Subject'}</DialogTitle>
+        <DialogTitle sx={{ pb: 1 }}>{editId ? 'Edit Subject' : 'Add Subject'}</DialogTitle>
         <DialogContent>
-          <Box display="flex" flexDirection="column" gap={2} pt={1}>
+          <Stack spacing={2.5} pt={1}>
             <TextField label="Subject Code" value={form.code} onChange={handleFormChange('code')} required helperText="e.g., EEMI, PE, MPMC" />
             <TextField label="Subject Name" value={form.name} onChange={handleFormChange('name')} required />
             <TextField label="Department" value={form.department} onChange={handleFormChange('department')} required />
             <TextField type="number" label="Semester" value={form.semester} onChange={handleFormChange('semester')} required inputProps={{ min: 1, max: 8 }} />
-          </Box>
+          </Stack>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setDialogOpen(false)} color="inherit">Cancel</Button>
+          <Button variant="contained" disableElevation onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
             {editId ? 'Update' : 'Create'}
           </Button>
         </DialogActions>
