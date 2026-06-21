@@ -1,0 +1,32 @@
+body {
+  background: #fff0f5;
+  color: #4b004b;
+}
+
+.header-gradient {
+  background: linear-gradient(135deg, #ffc0cb, #ffe4e1);
+  border-bottom: 4px solid #ff69b4;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.present-cell {
+  background-color: #90ee90 !important;
+}
+
+.absent-cell {
+  background-color: #ff6347 !important;
+  color: white !important;
+}
+
+.leave-cell {
+  background-color: #d8bfd8 !important;
+}
+
+.MuiTable-root {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.highlighted-row {
+  background-color: #fff0f5 !important;
+}
