@@ -93,9 +93,10 @@ export class AttendanceService {
 
     if (filters?.subject) query.subject = filters.subject;
     if (filters?.fromDate || filters?.toDate) {
-      query.date = {};
-      if (filters.fromDate) query.date.$gte = new Date(filters.fromDate);
-      if (filters.toDate) query.date.$lte = new Date(filters.toDate);
+      const dateQuery: Record<string, Date> = {};
+      if (filters.fromDate) dateQuery.$gte = new Date(filters.fromDate);
+      if (filters.toDate) dateQuery.$lte = new Date(filters.toDate);
+      query.date = dateQuery as unknown as string;
     }
 
     const skip = (page - 1) * limit;

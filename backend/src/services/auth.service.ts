@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { User, UserDocument } from '../models/User';
 import { config } from '../config';
 import { JwtPayload, UserRole } from '../types';
@@ -114,11 +114,11 @@ export class AuthService {
 
     const accessToken = jwt.sign(payload, config.jwt.secret, {
       expiresIn: config.jwt.accessExpiry,
-    });
+    } as SignOptions);
 
     const refreshToken = jwt.sign(payload, config.jwt.refreshSecret, {
       expiresIn: config.jwt.refreshExpiry,
-    });
+    } as SignOptions);
 
     return { accessToken, refreshToken };
   }
