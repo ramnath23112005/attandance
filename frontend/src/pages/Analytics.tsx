@@ -49,7 +49,7 @@ export default function Analytics() {
       <Typography variant="h5" fontWeight={600} mb={3}>Attendance Analytics</Typography>
 
       <Grid container spacing={3} mb={3}>
-        <Grid size={{ xs: 12, md: 3 }}>
+        <Grid item xs={12} md={3}>
           <Card><CardContent>
             <Typography variant="body2" color="text.secondary">Overall</Typography>
             <Typography variant="h3" fontWeight={700} color={stats && stats.percentage >= 75 ? 'success.main' : 'error.main'}>
@@ -58,19 +58,19 @@ export default function Analytics() {
             <Typography variant="body2">{stats?.present}/{stats?.total} lectures</Typography>
           </CardContent></Card>
         </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
+        <Grid item xs={12} md={3}>
           <Card><CardContent>
             <Typography variant="body2" color="text.secondary">This Week</Typography>
             <Typography variant="h4" fontWeight={700}>{weekly.data?.percentage ?? 0}%</Typography>
           </CardContent></Card>
         </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
+        <Grid item xs={12} md={3}>
           <Card><CardContent>
             <Typography variant="body2" color="text.secondary">This Month</Typography>
             <Typography variant="h4" fontWeight={700}>{monthly.data?.percentage ?? 0}%</Typography>
           </CardContent></Card>
         </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
+        <Grid item xs={12} md={3}>
           <Card><CardContent>
             <Typography variant="body2" color="text.secondary">Predicted Final</Typography>
             <Typography variant="h4" fontWeight={700} color={prediction?.isOnTrack ? 'success.main' : 'warning.main'}>
@@ -81,7 +81,7 @@ export default function Analytics() {
       </Grid>
 
       <Grid container spacing={3} mb={3}>
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -127,7 +127,7 @@ export default function Analytics() {
           </Card>
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid item xs={12} md={6}>
           <Card>
             <CardContent>
               <Typography variant="h6" mb={2}>Attendance Trend (12 Months)</Typography>
@@ -150,7 +150,7 @@ export default function Analytics() {
       </Grid>
 
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 7 }}>
+        <Grid item xs={12} md={7}>
           <Card>
             <CardContent>
               <Typography variant="h6" mb={2}>Subject-wise Performance</Typography>
@@ -192,7 +192,7 @@ export default function Analytics() {
           </Card>
         </Grid>
 
-        <Grid size={{ xs: 12, md: 5 }}>
+        <Grid item xs={12} md={5}>
           <Card>
             <CardContent>
               <Typography variant="h6" mb={2}>Prediction</Typography>

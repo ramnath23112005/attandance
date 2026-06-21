@@ -47,7 +47,7 @@ export default function Dashboard() {
     return (
       <Grid container spacing={3}>
         {[1, 2, 3, 4].map((i) => (
-          <Grid size={{ xs: 12, sm: 6, md: 3 }} key={i}>
+          <Grid item xs={12} sm={6} md={3} key={i}>
             <Skeleton variant="rounded" height={120} />
           </Grid>
         ))}
@@ -72,22 +72,22 @@ export default function Dashboard() {
       </Typography>
 
       <Grid container spacing={3} mb={3}>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <StatCard title="Overall Attendance" value={stats ? `${stats.percentage}%` : 'N/A'} subtitle={`${stats?.present || 0}/${stats?.total || 0} lectures`} color={stats && stats.percentage >= 75 ? COLORS.present : COLORS.absent} />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <StatCard title="Present" value={stats?.present || 0} color={COLORS.present} />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <StatCard title="Absent" value={stats?.absent || 0} color={COLORS.absent} />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <StatCard title="Leave" value={stats?.leave || 0} color={COLORS.leave} />
         </Grid>
       </Grid>
 
       <Grid container spacing={3} mb={3}>
-        <Grid size={{ xs: 12, md: 5 }}>
+        <Grid item xs={12} md={5}>
           <Card>
             <CardContent>
               <Typography variant="h6" fontWeight={600} mb={2}>Attendance Distribution</Typography>
@@ -109,7 +109,7 @@ export default function Dashboard() {
           </Card>
         </Grid>
 
-        <Grid size={{ xs: 12, md: 7 }}>
+        <Grid item xs={12} md={7}>
           <Card>
             <CardContent>
               <Typography variant="h6" fontWeight={600} mb={2}>Monthly Trend</Typography>
@@ -132,7 +132,7 @@ export default function Dashboard() {
       </Grid>
 
       <Grid container spacing={3} mb={3}>
-        <Grid size={{ xs: 12, md: 7 }}>
+        <Grid item xs={12} md={7}>
           <Card>
             <CardContent>
               <Typography variant="h6" fontWeight={600} mb={2}>Subject-wise Attendance</Typography>
@@ -153,7 +153,7 @@ export default function Dashboard() {
           </Card>
         </Grid>
 
-        <Grid size={{ xs: 12, md: 5 }}>
+        <Grid item xs={12} md={5}>
           <Card>
             <CardContent>
               <Typography variant="h6" fontWeight={600} mb={2}>Attendance Prediction</Typography>
@@ -183,7 +183,7 @@ export default function Dashboard() {
 
       {weekly.data && (
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid item xs={12} md={6}>
             <Card>
               <CardContent>
                 <Typography variant="h6" fontWeight={600} mb={1}>This Week</Typography>

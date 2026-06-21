@@ -22,7 +22,7 @@ export default function Users() {
     queryFn: () => authService.getUsers(page + 1, rowsPerPage),
   });
 
-  const users = (data?.data as Array<{ _id: string; name: string; email: string; role: string; department?: string; isActive: boolean }>) || [];
+  const users = (data?.data || []) as Array<Record<string, unknown>>;
   const total = data?.pagination?.total || 0;
 
   return (
@@ -47,39 +47,42 @@ export default function Users() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {users.map((user) => (
-                      <TableRow key={user._id} hover>
+                    {users.map((u, idx) => {
+                      const row = u as Record<string, string | boolean | undefined>;
+                      return (
+                      <TableRow key={(row._id as string) || idx} hover>
                         <TableCell>
                           <Box display="flex" alignItems="center" gap={2}>
-                            <Avatar sx={{ width: 32, height: 32, bgcolor: ROLE_COLORS[user.role] || '#757575', fontSize: 14 }}>
-                              {user.name.charAt(0).toUpperCase()}
+                            <Avatar sx={{ width: 32, height: 32, bgcolor: ROLE_COLORS[(row.role as string)] || '#757575', fontSize: 14 }}>
+                              {(row.name as string)?.charAt(0).toUpperCase()}
                             </Avatar>
-                            {user.name}
+                            {row.name as string}
                           </Box>
                         </TableCell>
-                        <TableCell>{user.email}</TableCell>
+                        <TableCell>{row.email as string}</TableCell>
                         <TableCell>
                           <Chip
-                            label={user.role}
+                            label={row.role as string}
                             size="small"
                             sx={{
-                              bgcolor: ROLE_COLORS[user.role],
+                              bgcolor: ROLE_COLORS[(row.role as string)] || '#757575',
                               color: '#fff',
                               fontWeight: 600,
                               textTransform: 'capitalize',
                             }}
                           />
                         </TableCell>
-                        <TableCell>{user.department || '—'}</TableCell>
+                        <TableCell>{(row.department as string) || '—'}</TableCell>
                         <TableCell>
                           <Chip
-                            label={user.isActive ? 'Active' : 'Inactive'}
+                            label={row.isActive ? 'Active' : 'Inactive'}
                             size="small"
-                            color={user.isActive ? 'success' : 'default'}
+                            color={row.isActive ? 'success' : 'default'}
                           />
                         </TableCell>
                       </TableRow>
-                    ))}
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </TableContainer>
