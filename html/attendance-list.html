@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance List</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        // Function to load attendance records from localStorage
+        function loadAttendance() {
+            const attendanceRecords = JSON.parse(localStorage.getItem('attendanceRecords')) || [];
+            const tableBody = document.getElementById('attendance-table-body');
+
+            if (attendanceRecords.length === 0) {
+                tableBody.innerHTML = "<tr><td colspan='3'>No attendance records found.</td></tr>";
+            } else {
+                attendanceRecords.forEach(record => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${record.day}</td>
+                        <td>${record.period}</td>
+                        <td>${record.status}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+            console.log('Attendance Records:', attendanceRecords);  // For debugging
+        }
+
+        // Call the function to load attendance records when the page loads
+        window.onload = loadAttendance;
+    </script>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Attendance List</h1>
+        <p>Here is a detailed list of your attendance.</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Day</th>
+                <th>Lecture</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="attendance-table-body">
+            <!-- Attendance records will be inserted here -->
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <a href="index5.html"><button>Back to Timetable</button></a>
+    </div>
+
+</body>
+</html>
