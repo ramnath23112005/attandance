@@ -43,7 +43,6 @@ const subjectSchema = new Schema<SubjectDocument>(
   }
 );
 
-subjectSchema.index({ code: 1 });
 subjectSchema.index({ department: 1, semester: 1 });
 
 export const Subject = mongoose.model<SubjectDocument>('Subject', subjectSchema);

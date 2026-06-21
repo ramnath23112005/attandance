@@ -60,7 +60,6 @@ const userSchema = new Schema<UserDocument>(
   }
 );
 
-userSchema.index({ email: 1 });
 userSchema.index({ role: 1 });
 userSchema.index({ department: 1 });
 
